@@ -5,29 +5,47 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SingleTodo = ({ todo, setTodos, todos }) => {
   const [edit, setEdit] = useState(false);
   const [editText, setEditText] = useState(todo.text);
+
+  useEffect(() => {
+    AsyncStorage.setItem("todos", JSON.stringify(todos))
+
+  },[todos]);
+
+
+
 
   const handleEdit = () => {
     if (!edit) setEdit(!edit);
     else {
       setEdit(!edit);
       setTodos(
-        todos.map((t) =>
+        todos.map((t) =>(
           t.id === todo.id
             ? {
                 id: t.id,
                 text: editText,
               }
             : t
-        )
+        ))
       );
     }
   };
+
+  const handleDelete = (id) =>{
+    setTodos(todos.filter((t) => 
+      t.id !== id
+    ))
+
+
+
+  }
 
   return (
     <View style={styles.todo}>
@@ -36,7 +54,7 @@ const SingleTodo = ({ todo, setTodos, todos }) => {
       ) : (
         <TextInput
           style={styles.todoInput}
-          value={todo.text}
+          value={editText}
           onChangeText={(text) => setEditText(text)}
         />
       )}
@@ -56,6 +74,7 @@ const SingleTodo = ({ todo, setTodos, todos }) => {
           name="delete"
           size={23}
           color="black"
+          onPress={() => handleDelete(todo.id)}
         />
       </TouchableOpacity>
     </View>

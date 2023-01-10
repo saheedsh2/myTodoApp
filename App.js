@@ -1,5 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   FlatList,
   ScrollView,
@@ -23,11 +24,23 @@ export default function App() {
     setTodo("")
   }
 
+  const fetchTodos = async () => {
+    const data = await AsyncStorage.getItem("todos");
+    if (data) setTodos(JSON.parse(data));
+  };
+
+  useEffect(() => {
+    fetchTodos();
+
+  },[])
+
+
+
   // console.log(todos);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>MY TODOS</Text>
+      <Text style={styles.heading}>Todo APP</Text>
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Enter Note"
